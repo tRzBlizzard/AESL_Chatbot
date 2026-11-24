@@ -4,221 +4,89 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0b0b0b">
 <title>AESL Assistant</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <style>
-  :root {
-    --yellow: #ffcd11;
-    --yellow-dim: #e0b400;
-    --black: #0b0b0b;
-    --charcoal: #161616;
-    --panel: #212121;
-    --line: #3a3a3a;
-    --ink: #f4f4f2;
-    --muted: #a9a9a4;
-    --danger: #ff6b57;
-    color-scheme: dark;
-  }
-  * { box-sizing: border-box; }
-  html, body { height: 100%; margin: 0; }
-  body {
-    background: var(--charcoal);
-    color: var(--ink);
-    font: 16px/1.55 "Helvetica Neue", Helvetica, Arial, "Segoe UI", sans-serif;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* ---------- header ---------- */
-  header {
-    background: var(--black);
-    border-bottom: 3px solid var(--yellow);
-  }
-  .bar {
-    max-width: 920px;
-    margin: 0 auto;
-    padding: 14px 20px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-  .mark {
-    background: var(--yellow);
-    color: var(--black);
-    font-weight: 900;
-    font-size: 1.35rem;
-    letter-spacing: .06em;
-    padding: 6px 12px 4px;
-    line-height: 1;
-  }
-  .titles { flex: 1; min-width: 0; }
-  .titles h1 {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 800;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-  }
-  .titles p {
-    margin: 2px 0 0;
-    font-size: .8rem;
-    color: var(--muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .ghost {
-    font: inherit;
-    font-size: .78rem;
-    font-weight: 700;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    color: var(--yellow);
-    background: transparent;
-    border: 1px solid var(--yellow);
-    padding: 8px 14px;
-    cursor: pointer;
-  }
-  .ghost:hover { background: var(--yellow); color: var(--black); }
-  .stripe {
-    height: 6px;
-    background: repeating-linear-gradient(
-      -45deg, var(--yellow) 0 10px, var(--black) 10px 20px
-    );
-  }
-
-  /* ---------- conversation ---------- */
-  main {
-    flex: 1;
-    overflow-y: auto;
-    width: 100%;
-    max-width: 920px;
-    margin: 0 auto;
-    padding: 24px 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-  .empty { margin: auto 0; max-width: 60ch; }
-  .empty h2 {
-    margin: 0 0 6px;
-    font-size: 2rem;
-    line-height: 1.1;
-    font-weight: 900;
-    letter-spacing: .02em;
-    text-transform: uppercase;
-  }
-  .empty h2 span { color: var(--yellow); }
-  .empty p { margin: 0 0 18px; color: var(--muted); }
-  .chips { display: flex; flex-wrap: wrap; gap: 10px; }
-  .chip {
-    font: inherit;
-    font-size: .92rem;
-    color: var(--ink);
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-left: 4px solid var(--yellow);
-    padding: 10px 14px;
-    text-align: left;
-    cursor: pointer;
-  }
-  .chip:hover { background: #2b2b2b; border-color: var(--yellow); }
-
-  .msg {
-    max-width: min(85%, 680px);
-    padding: 12px 16px;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-  }
-  .msg.user {
-    align-self: flex-end;
-    background: var(--yellow);
-    color: var(--black);
-    font-weight: 600;
-  }
-  .msg.bot {
-    align-self: flex-start;
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-left: 4px solid var(--yellow);
-  }
-  .msg.error { border-left-color: var(--danger); }
-  .msg.pending { color: var(--muted); }
-  .dots span { animation: blink 1.2s infinite both; }
-  .dots span:nth-child(2) { animation-delay: .2s; }
-  .dots span:nth-child(3) { animation-delay: .4s; }
-  @keyframes blink { 0%, 80%, 100% { opacity: .2; } 40% { opacity: 1; } }
-  @media (prefers-reduced-motion: reduce) { .dots span { animation: none; } }
-
-  .sources {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid var(--line);
-    font-size: .82rem;
-    color: var(--muted);
-    white-space: normal;
-  }
-  .sources b {
-    color: var(--ink);
-    letter-spacing: .1em;
-    font-size: .7rem;
-    text-transform: uppercase;
-    margin-right: 6px;
-  }
-  .sources a { color: var(--yellow); }
-  .sources a:hover { color: var(--ink); }
-
-  /* ---------- input ---------- */
-  form {
-    background: var(--black);
-    border-top: 1px solid var(--line);
-    padding: 14px 20px 10px;
-  }
-  .row { display: flex; gap: 10px; max-width: 880px; margin: 0 auto; }
-  textarea {
-    flex: 1;
-    resize: none;
-    font: inherit;
-    color: var(--ink);
-    background: var(--charcoal);
-    border: 1px solid var(--line);
-    padding: 12px 14px;
-    max-height: 140px;
-  }
-  textarea::placeholder { color: #7d7d79; }
-  textarea:focus { outline: none; border-color: var(--yellow); }
-  button.send {
-    font: inherit;
-    font-weight: 800;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    background: var(--yellow);
-    color: var(--black);
-    border: 0;
-    padding: 0 24px;
-    cursor: pointer;
-  }
-  button.send:hover:not(:disabled) { background: var(--yellow-dim); }
-  button.send:disabled { opacity: .5; cursor: wait; }
-  button:focus-visible, a:focus-visible {
-    outline: 2px solid var(--ink);
-    outline-offset: 2px;
-  }
-  .hint {
-    max-width: 880px;
-    margin: 8px auto 0;
-    font-size: .74rem;
-    color: #8d8d88;
-  }
-
-  @media (max-width: 560px) {
-    .titles p { display: none; }
-    .empty h2 { font-size: 1.5rem; }
-    .msg { max-width: 94%; }
-  }
+:root {
+  --yellow:#ffcd11; --yellow-dim:#e0b400; --black:#0b0b0b;
+  --charcoal:#161616; --panel:#212121; --line:#3a3a3a;
+  --ink:#f4f4f2; --muted:#a9a9a4; --danger:#ff6b57;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;min-height:100%;margin:0}
+body{
+  min-height:100vh;min-height:100dvh;background:var(--charcoal);color:var(--ink);
+  font:16px/1.55 "Helvetica Neue",Helvetica,Arial,"Segoe UI",sans-serif;
+  display:flex;flex-direction:column;overflow:hidden
+}
+.app-header{flex:0 0 auto;background:var(--black);border-bottom:3px solid var(--yellow)}
+.bar{width:min(100%,960px);margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px}
+.mark{flex:0 0 auto;background:var(--yellow);color:var(--black);font-weight:900;font-size:1.25rem;letter-spacing:.06em;padding:7px 11px 5px;line-height:1}
+.titles{flex:1 1 auto;min-width:0}
+.titles h1{margin:0;font-size:1rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.titles p{margin:2px 0 0;font-size:.8rem;color:var(--muted);overflow-wrap:anywhere}
+.ghost{flex:0 0 auto;font:inherit;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--yellow);background:transparent;border:1px solid var(--yellow);padding:8px 13px;cursor:pointer;white-space:nowrap}
+.ghost:hover{background:var(--yellow);color:var(--black)}
+.stripe{height:5px;background:repeating-linear-gradient(-45deg,var(--yellow) 0 10px,var(--black) 10px 20px)}
+main{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;width:100%;max-width:960px;margin:0 auto;padding:24px 20px;display:flex;flex-direction:column;gap:16px;scroll-behavior:smooth}
+.empty{margin:auto 0;max-width:60ch}
+.empty h2{margin:0 0 6px;font-size:clamp(1.55rem,5vw,2rem);line-height:1.1;font-weight:900;letter-spacing:.02em;text-transform:uppercase}
+.empty h2 span{color:var(--yellow)}
+.empty p{margin:0 0 18px;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{max-width:100%;font:inherit;font-size:.9rem;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--yellow);padding:10px 14px;text-align:left;overflow-wrap:anywhere;cursor:pointer}
+.chip:hover{background:#2b2b2b;border-color:var(--yellow)}
+.msg{max-width:min(85%,720px);min-width:0;padding:12px 16px;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
+.msg.user{align-self:flex-end;background:var(--yellow);color:var(--black);font-weight:600}
+.msg.bot{align-self:flex-start;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--yellow)}
+.msg.error{border-left-color:var(--danger)}
+.msg.pending{color:var(--muted)}
+.dots span{animation:blink 1.2s infinite both}
+.dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.2}40%{opacity:1}}
+.sources{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:.82rem;color:var(--muted);white-space:normal;overflow-wrap:anywhere}
+.sources b{color:var(--ink);letter-spacing:.1em;font-size:.7rem;text-transform:uppercase;margin-right:6px}
+.sources a{color:var(--yellow)}.sources a:hover{color:var(--ink)}
+.composer{flex:0 0 auto;background:var(--black);border-top:1px solid var(--line);padding:12px 20px max(10px,env(safe-area-inset-bottom))}
+.composer-inner{width:min(100%,920px);margin:0 auto}
+.composer-row{display:flex;align-items:stretch;gap:10px}
+textarea{display:block;flex:1 1 auto;min-width:0;min-height:48px;resize:none;font:inherit;color:var(--ink);background:var(--charcoal);border:1px solid var(--line);border-radius:0;padding:11px 13px;max-height:140px;line-height:1.4}
+textarea::placeholder{color:#7d7d79}
+textarea:focus{outline:none;border-color:var(--yellow);box-shadow:0 0 0 2px rgb(255 205 17 / 14%)}
+button.send{flex:0 0 auto;min-width:88px;font:inherit;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:var(--yellow);color:var(--black);border:0;border-radius:0;padding:0 22px;cursor:pointer}
+button.send:hover:not(:disabled){background:var(--yellow-dim)}
+button.send:disabled{opacity:.5;cursor:wait}
+button:focus-visible,a:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.hint{margin:7px 0 0;font-size:.72rem;color:#8d8d88}
+@media(max-width:767.98px){
+  .bar{padding:10px 14px;gap:10px}.mark{font-size:1.05rem;padding:7px 9px 5px}
+  .titles h1{font-size:.92rem}.titles p{font-size:.72rem}
+  main{padding:18px 14px;gap:13px}.msg{max-width:92%;padding:11px 13px}
+  .composer{padding:10px 12px max(9px,env(safe-area-inset-bottom))}
+  .chip{font-size:.86rem;padding:9px 11px}
+}
+@media(max-width:480px){
+  .bar{padding:9px 10px;gap:8px}.mark{font-size:.95rem;padding:7px 8px 5px}
+  .titles h1{font-size:.85rem;letter-spacing:.09em}.titles p{display:none}
+  .ghost{font-size:.66rem;padding:7px 8px;letter-spacing:.04em}
+  main{padding:16px 10px;gap:11px}.empty{max-width:100%}.empty h2{font-size:1.55rem}
+  .empty p{font-size:.92rem}.chips{gap:8px}.chip{width:100%;font-size:.84rem}
+  .msg{max-width:96%;padding:10px 11px;font-size:.94rem}
+  .composer{padding-left:9px;padding-right:9px}.composer-row{gap:7px}
+  textarea{min-height:46px;padding:10px;font-size:16px}
+  button.send{min-width:64px;padding:0 12px;font-size:.85rem}
+  .hint{font-size:.65rem;line-height:1.35}
+}
+@media(prefers-reduced-motion:reduce){
+  .dots span{animation:none}main{scroll-behavior:auto}
+  *{transition-duration:.01ms!important}
+}
 </style>
 </head>
 <body>
-<header>
+<header class="app-header">
   <div class="bar">
     <div class="mark" aria-hidden="true">AESL</div>
     <div class="titles">
@@ -242,14 +110,16 @@
   </div>
 </main>
 
-<form id="form">
-  <div class="row">
+<form id="form" class="composer">
+  <div class="composer-inner"><div class="composer-row">
     <textarea id="question" rows="1" maxlength="2000" placeholder="Type your question" aria-label="Your question" required></textarea>
     <button class="send" id="send" type="submit">Ask</button>
   </div>
   <div class="hint">Enter to send &middot; Shift+Enter for a new line &middot; Check important details against the source.</div>
+  </div>
 </form>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 <script>
   const log = document.getElementById("log");
   const form = document.getElementById("form");
@@ -333,7 +203,7 @@
       addMessage("bot error", "Couldn't reach the assistant. Is the server running?");
     } finally {
       send.disabled = false;
-      input.focus();
+      if (window.matchMedia("(min-width: 768px)").matches) input.focus();
     }
   }
 

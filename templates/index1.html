@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>AESL Assistant</title>
+<style>
+  :root {
+    --yellow: #ffcd11;
+    --yellow-dim: #e0b400;
+    --black: #0b0b0b;
+    --charcoal: #161616;
+    --panel: #212121;
+    --line: #3a3a3a;
+    --ink: #f4f4f2;
+    --muted: #a9a9a4;
+    --danger: #ff6b57;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--charcoal);
+    color: var(--ink);
+    font: 16px/1.55 "Helvetica Neue", Helvetica, Arial, "Segoe UI", sans-serif;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---------- header ---------- */
+  header {
+    background: var(--black);
+    border-bottom: 3px solid var(--yellow);
+  }
+  .bar {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .mark {
+    background: var(--yellow);
+    color: var(--black);
+    font-weight: 900;
+    font-size: 1.35rem;
+    letter-spacing: .06em;
+    padding: 6px 12px 4px;
+    line-height: 1;
+  }
+  .titles { flex: 1; min-width: 0; }
+  .titles h1 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+  .titles p {
+    margin: 2px 0 0;
+    font-size: .8rem;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ghost {
+    font: inherit;
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--yellow);
+    background: transparent;
+    border: 1px solid var(--yellow);
+    padding: 8px 14px;
+    cursor: pointer;
+  }
+  .ghost:hover { background: var(--yellow); color: var(--black); }
+  .stripe {
+    height: 6px;
+    background: repeating-linear-gradient(
+      -45deg, var(--yellow) 0 10px, var(--black) 10px 20px
+    );
+  }
+
+  /* ---------- conversation ---------- */
+  main {
+    flex: 1;
+    overflow-y: auto;
+    width: 100%;
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .empty { margin: auto 0; max-width: 60ch; }
+  .empty h2 {
+    margin: 0 0 6px;
+    font-size: 2rem;
+    line-height: 1.1;
+    font-weight: 900;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+  }
+  .empty h2 span { color: var(--yellow); }
+  .empty p { margin: 0 0 18px; color: var(--muted); }
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .chip {
+    font: inherit;
+    font-size: .92rem;
+    color: var(--ink);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--yellow);
+    padding: 10px 14px;
+    text-align: left;
+    cursor: pointer;
+  }
+  .chip:hover { background: #2b2b2b; border-color: var(--yellow); }
+
+  .msg {
+    max-width: min(85%, 680px);
+    padding: 12px 16px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .msg.user {
+    align-self: flex-end;
+    background: var(--yellow);
+    color: var(--black);
+    font-weight: 600;
+  }
+  .msg.bot {
+    align-self: flex-start;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--yellow);
+  }
+  .msg.error { border-left-color: var(--danger); }
+  .msg.pending { color: var(--muted); }
+  .dots span { animation: blink 1.2s infinite both; }
+  .dots span:nth-child(2) { animation-delay: .2s; }
+  .dots span:nth-child(3) { animation-delay: .4s; }
+  @keyframes blink { 0%, 80%, 100% { opacity: .2; } 40% { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .dots span { animation: none; } }
+
+  .sources {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+    font-size: .82rem;
+    color: var(--muted);
+    white-space: normal;
+  }
+  .sources b {
+    color: var(--ink);
+    letter-spacing: .1em;
+    font-size: .7rem;
+    text-transform: uppercase;
+    margin-right: 6px;
+  }
+  .sources a { color: var(--yellow); }
+  .sources a:hover { color: var(--ink); }
+
+  /* ---------- input ---------- */
+  form {
+    background: var(--black);
+    border-top: 1px solid var(--line);
+    padding: 14px 20px 10px;
+  }
+  .row { display: flex; gap: 10px; max-width: 880px; margin: 0 auto; }
+  textarea {
+    flex: 1;
+    resize: none;
+    font: inherit;
+    color: var(--ink);
+    background: var(--charcoal);
+    border: 1px solid var(--line);
+    padding: 12px 14px;
+    max-height: 140px;
+  }
+  textarea::placeholder { color: #7d7d79; }
+  textarea:focus { outline: none; border-color: var(--yellow); }
+  button.send {
+    font: inherit;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    background: var(--yellow);
+    color: var(--black);
+    border: 0;
+    padding: 0 24px;
+    cursor: pointer;
+  }
+  button.send:hover:not(:disabled) { background: var(--yellow-dim); }
+  button.send:disabled { opacity: .5; cursor: wait; }
+  button:focus-visible, a:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+  }
+  .hint {
+    max-width: 880px;
+    margin: 8px auto 0;
+    font-size: .74rem;
+    color: #8d8d88;
+  }
+
+  @media (max-width: 560px) {
+    .titles p { display: none; }
+    .empty h2 { font-size: 1.5rem; }
+    .msg { max-width: 94%; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div class="mark" aria-hidden="true">AESL</div>
+    <div class="titles">
+      <h1>Assistant</h1>
+      <p>Allied Engineering &amp; Services (Pvt.) Ltd &middot; website and internal documents</p>
+    </div>
+    <button class="ghost" id="reset" type="button">New chat</button>
+  </div>
+  <div class="stripe" aria-hidden="true"></div>
+</header>
+
+<main id="log" aria-live="polite">
+  <div class="empty" id="empty">
+    <h2>How can we <span>help?</span></h2>
+    <p>Ask about AESL products and services, staff extensions, or company policies.</p>
+    <div class="chips">
+      <button class="chip" type="button">Who has extension 338?</button>
+      <button class="chip" type="button">What is the overtime allowance policy?</button>
+      <button class="chip" type="button">Who are Cross Functional Team Karachi Members?</button>
+    </div>
+  </div>
+</main>
+
+<form id="form">
+  <div class="row">
+    <textarea id="question" rows="1" maxlength="2000" placeholder="Type your question" aria-label="Your question" required></textarea>
+    <button class="send" id="send" type="submit">Ask</button>
+  </div>
+  <div class="hint">Enter to send &middot; Shift+Enter for a new line &middot; Check important details against the source.</div>
+</form>
+
+<script>
+  const log = document.getElementById("log");
+  const form = document.getElementById("form");
+  const input = document.getElementById("question");
+  const send = document.getElementById("send");
+  const reset = document.getElementById("reset");
+  const emptyTemplate = document.getElementById("empty").cloneNode(true);
+  let history = [];
+
+  function addMessage(kind, text, sources) {
+    const empty = document.getElementById("empty");
+    if (empty) empty.remove();
+
+    const div = document.createElement("div");
+    div.className = "msg " + kind;
+
+    if (kind.includes("pending")) {
+      div.append(text);
+      const dots = document.createElement("span");
+      dots.className = "dots";
+      dots.innerHTML = "<span>.</span><span>.</span><span>.</span>";
+      div.append(dots);
+    } else {
+      div.textContent = text;
+    }
+
+    if (sources && sources.length) {
+      const box = document.createElement("div");
+      box.className = "sources";
+      const label = document.createElement("b");
+      label.textContent = "Sources";
+      box.append(label);
+      sources.forEach((s, i) => {
+        if (i) box.append(", ");
+        if (s.url) {
+          const a = document.createElement("a");
+          a.href = s.url;
+          a.target = "_blank";
+          a.rel = "noopener";
+          a.textContent = s.title || s.url;
+          box.append(a);
+        } else {
+          let pdfSource = s.filename + " (page " + s.page + ")";
+          if (s.last_modified) {
+            pdfSource += " — Last modified: " + s.last_modified;
+          }
+          box.append(pdfSource);
+        }
+      });
+      div.append(box);
+    }
+
+    log.append(div);
+    log.scrollTop = log.scrollHeight;
+    return div;
+  }
+
+  async function ask(question) {
+    addMessage("user", question);
+    const pending = addMessage("bot pending", "Searching");
+    send.disabled = true;
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question, history: history.slice(-6) })
+      });
+      const data = await response.json();
+      pending.remove();
+
+      if (!response.ok) {
+        addMessage("bot error", data.error || "Something went wrong.");
+      } else {
+        addMessage("bot", data.answer, data.sources);
+        history.push({ role: "user", content: question });
+        history.push({ role: "assistant", content: data.answer });
+      }
+    } catch (err) {
+      pending.remove();
+      addMessage("bot error", "Couldn't reach the assistant. Is the server running?");
+    } finally {
+      send.disabled = false;
+      input.focus();
+    }
+  }
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const question = input.value.trim();
+    if (!question || send.disabled) return;
+    input.value = "";
+    input.style.height = "auto";
+    ask(question);
+  });
+
+  // Starter questions
+  log.addEventListener("click", (event) => {
+    const chip = event.target.closest(".chip");
+    if (chip && !send.disabled) ask(chip.textContent.trim());
+  });
+
+  reset.addEventListener("click", () => {
+    history = [];
+    log.replaceChildren(emptyTemplate.cloneNode(true));
+    input.focus();
+  });
+
+  input.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      form.requestSubmit();
+    }
+  });
+
+  input.addEventListener("input", () => {
+    input.style.height = "auto";
+    input.style.height = Math.min(input.scrollHeight, 140) + "px";
+  });
+</script>
+</body>
+</html>
