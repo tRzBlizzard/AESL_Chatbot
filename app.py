@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from flask import Flask, jsonify, render_template, request
 
 from config import MAX_QUESTION_LENGTH
@@ -7,6 +9,26 @@ from hybrid_qa import answer_hybrid_question
 
 app = Flask(__name__)
 
+# Project folders
+BASE_DIR = Path(__file__).resolve().parent
+DOCUMENTS_DIR = BASE_DIR / "documents"
+
+
+def get_pdf_documents():
+    """Return PDF filenames currently present in the documents folder."""
+    if not DOCUMENTS_DIR.is_dir():
+        return []
+
+    return sorted(
+        (
+            path.name
+            for path in DOCUMENTS_DIR.iterdir()
+            if path.is_file() and path.suffix.lower() == ".pdf"
+        ),
+        key=str.casefold,
+    )
+
+
 # Prepare the website database and (re)build the PDF index if the files in
 # documents/ have changed since the last run.
 initialize_database()
@@ -15,7 +37,12 @@ ensure_pdf_index()
 
 @app.get("/")
 def home():
-    return render_template("index.html")
+    pdf_documents = get_pdf_documents()
+    return render_template(
+        "index.html",
+        pdf_documents=pdf_documents,
+        pdf_document_count=len(pdf_documents),
+    )
 
 
 @app.post("/api/chat")
@@ -45,9 +72,10 @@ def chat():
 
 
 if __name__ == "__main__":
-    # Local laptop only. Add authentication/HTTPS before office-network deployment.
+    # Keep the current host setting for local-only access.
+    # For office-LAN access, use host="0.0.0.0" and configure firewall/authentication.
     from waitress import serve
 
     print("AESL assistant running at http://127.0.0.1:5000")
-    # serve(app, host="127.0.0.1", port=5000, threads=4)
-    serve(app, host="0.0.0.0", port=5000)
+    serve(app, host="127.0.0.1", port=5000, threads=4)
+    # serve(app, host="0.0.0.0", port=5000, threads=4)

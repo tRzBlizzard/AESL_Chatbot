@@ -23,14 +23,47 @@ body{
 }
 .app-header{flex:0 0 auto;background:var(--black);border-bottom:3px solid var(--yellow)}
 .bar{width:min(100%,960px);margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px}
-.mark{flex:0 0 auto;background:var(--yellow);color:var(--black);font-weight:900;font-size:1.25rem;letter-spacing:.06em;padding:7px 11px 5px;line-height:1}
+.mark {
+    width: 90px;
+    height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: transparent;
+}
+
+.mark img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
 .titles{flex:1 1 auto;min-width:0}
 .titles h1{margin:0;font-size:1rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
 .titles p{margin:2px 0 0;font-size:.8rem;color:var(--muted);overflow-wrap:anywhere}
 .ghost{flex:0 0 auto;font:inherit;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--yellow);background:transparent;border:1px solid var(--yellow);padding:8px 13px;cursor:pointer;white-space:nowrap}
 .ghost:hover{background:var(--yellow);color:var(--black)}
 .stripe{height:5px;background:repeating-linear-gradient(-45deg,var(--yellow) 0 10px,var(--black) 10px 20px)}
-main{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;width:100%;max-width:960px;margin:0 auto;padding:24px 20px;display:flex;flex-direction:column;gap:16px;scroll-behavior:smooth}
+.workspace{flex:1 1 auto;min-height:0;width:min(100%,1200px);margin:0 auto;display:flex;overflow:hidden}
+.library-sidebar{flex:0 0 270px;min-width:0;display:flex;flex-direction:column;gap:14px;padding:22px 16px;background:#111;border-right:1px solid var(--line);overflow:hidden}
+.library-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.library-heading h2{margin:0;font-size:.9rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
+.library-heading p{margin:4px 0 0;font-size:.72rem;color:var(--muted)}
+.doc-count{flex:0 0 auto;min-width:30px;padding:4px 8px;text-align:center;background:#292929;border:1px solid var(--line);color:var(--yellow);font-size:.75rem;font-weight:800}
+.library-search-label{margin:0 0 -9px;color:var(--muted);font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.library-search{width:100%;min-width:0;padding:9px 10px;background:var(--charcoal);border:1px solid var(--line);border-radius:0;color:var(--ink);font:inherit;font-size:.82rem}
+.library-search:focus{outline:none;border-color:var(--yellow);box-shadow:0 0 0 2px rgb(255 205 17 / 12%)}
+.pdf-list{display:flex;flex-direction:column;gap:7px;min-height:0;overflow-y:auto;padding-right:3px}
+.pdf-item{display:flex;align-items:flex-start;gap:9px;min-width:0;padding:10px;background:var(--panel);border:1px solid #303030}\n.pdf-item[hidden]{display:none}
+.pdf-icon{flex:0 0 auto;padding:3px 5px;background:#642b25;color:#ffb2a8;font-size:.61rem;font-weight:900;letter-spacing:.04em}
+.pdf-name{min-width:0;color:#e8e8e5;font-size:.78rem;line-height:1.4;overflow-wrap:anywhere;word-break:break-word}
+.pdf-empty{margin:4px 0;color:var(--muted);font-size:.78rem;line-height:1.5}
+.library-note{margin-top:auto;padding-top:10px;border-top:1px solid var(--line);color:#858580;font-size:.68rem;line-height:1.45}
+.chat-panel{flex:1 1 0;min-width:0;min-height:0;display:flex;flex-direction:column}
+.mobile-library-bar{display:none;flex:0 0 auto;padding:8px 12px;background:#191919;border-bottom:1px solid var(--line)}
+.mobile-library-toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:8px 10px;background:var(--panel);border:1px solid var(--line);color:var(--ink);font:inherit;font-size:.78rem;font-weight:700;text-align:left}
+.mobile-library-toggle span{color:var(--yellow);font-size:.72rem}
+.chat-log{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;width:100%;margin:0;padding:24px 20px;display:flex;flex-direction:column;gap:16px;scroll-behavior:smooth}
 .empty{margin:auto 0;max-width:60ch}
 .empty h2{margin:0 0 6px;font-size:clamp(1.55rem,5vw,2rem);line-height:1.1;font-weight:900;letter-spacing:.02em;text-transform:uppercase}
 .empty h2 span{color:var(--yellow)}
@@ -63,15 +96,25 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ink);outline-offset
 @media(max-width:767.98px){
   .bar{padding:10px 14px;gap:10px}.mark{font-size:1.05rem;padding:7px 9px 5px}
   .titles h1{font-size:.92rem}.titles p{font-size:.72rem}
-  main{padding:18px 14px;gap:13px}.msg{max-width:92%;padding:11px 13px}
+  .library-sidebar{flex-basis:245px;padding:18px 12px}
+  .chat-log{padding:18px 14px;gap:13px}.msg{max-width:92%;padding:11px 13px}
   .composer{padding:10px 12px max(9px,env(safe-area-inset-bottom))}
   .chip{font-size:.86rem;padding:9px 11px}
+}
+@media(max-width:767.98px){
+  .workspace{position:relative;flex-direction:column}
+  .library-sidebar{display:none;flex:0 0 auto;max-height:245px;border-right:0;border-bottom:1px solid var(--line);padding:12px}
+  .workspace.library-open .library-sidebar{display:flex}
+  .library-sidebar .pdf-list{max-height:112px}
+  .library-note{display:none}
+  .mobile-library-bar{display:block}
+  .chat-log{padding:18px 14px;gap:13px}
 }
 @media(max-width:480px){
   .bar{padding:9px 10px;gap:8px}.mark{font-size:.95rem;padding:7px 8px 5px}
   .titles h1{font-size:.85rem;letter-spacing:.09em}.titles p{display:none}
   .ghost{font-size:.66rem;padding:7px 8px;letter-spacing:.04em}
-  main{padding:16px 10px;gap:11px}.empty{max-width:100%}.empty h2{font-size:1.55rem}
+  .chat-log{padding:16px 10px;gap:11px}.empty{max-width:100%}.empty h2{font-size:1.55rem}
   .empty p{font-size:.92rem}.chips{gap:8px}.chip{width:100%;font-size:.84rem}
   .msg{max-width:96%;padding:10px 11px;font-size:.94rem}
   .composer{padding-left:9px;padding-right:9px}.composer-row{gap:7px}
@@ -88,17 +131,60 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ink);outline-offset
 <body>
 <header class="app-header">
   <div class="bar">
-    <div class="mark" aria-hidden="true">AESL</div>
+    <!-- <div class="mark" aria-hidden="true">AESL</div> -->
+     <div class="mark">
+      <img src="{{ url_for('static', filename='96229.jpg') }}"
+           alt="Allied Engineering & Services Logo">
+  </div>
     <div class="titles">
       <h1>Assistant</h1>
-      <p>Allied Engineering &amp; Services (Pvt.) Ltd &middot; website and internal documents</p>
+      <p>Allied Engineering &amp; Services (Pvt.) Ltd &middot; internal documents</p>
     </div>
     <button class="ghost" id="reset" type="button">New chat</button>
   </div>
   <div class="stripe" aria-hidden="true"></div>
 </header>
 
-<main id="log" aria-live="polite">
+<div class="workspace" id="workspace">
+  <aside class="library-sidebar" id="librarySidebar" aria-label="Uploaded PDF documents">
+    <div class="library-heading">
+      <div>
+        <h2>Sources / Uploaded PDFs</h2>
+        <p>Documents available for searching</p>
+      </div>
+      <span class="doc-count" aria-label="{{ pdf_document_count }} PDF documents">{{ pdf_document_count }}</span>
+    </div>
+
+    <label class="library-search-label" for="pdfSearch">Find a document</label>
+    <input class="library-search" id="pdfSearch" type="search" placeholder="Search PDF names..." autocomplete="off">
+
+    <div class="pdf-list" id="pdfList">
+      {% for document in pdf_documents %}
+      <div class="pdf-item" data-filename="{{ document|lower }}">
+        <span class="pdf-icon" aria-hidden="true">PDF</span>
+        <span class="pdf-name" title="{{ document }}">{{ document }}</span>
+      </div>
+      {% else %}
+      <p class="pdf-empty">No PDF documents were found in the documents folder.</p>
+      {% endfor %}
+      <p class="pdf-empty" id="pdfNoMatches" hidden>No matching PDF names.</p>
+    </div>
+
+    <div class="library-note">
+      These are the PDFs currently present in the documents folder. The list shows available files; it does not indicate individual indexing status.
+    </div>
+  </aside>
+
+  <section class="chat-panel" aria-label="AESL assistant chat">
+    <div class="mobile-library-bar">
+      <button class="mobile-library-toggle" id="libraryToggle" type="button"
+              aria-expanded="false" aria-controls="librarySidebar">
+        Sources / Uploaded PDFs
+        <span>{{ pdf_document_count }} PDFs &nbsp; ▾</span>
+      </button>
+    </div>
+
+    <main id="log" class="chat-log" aria-live="polite">
   <div class="empty" id="empty">
     <h2>How can we <span>help?</span></h2>
     <p>Ask about AESL products and services, staff extensions, or company policies.</p>
@@ -106,9 +192,10 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ink);outline-offset
       <button class="chip" type="button">Who has extension 338?</button>
       <button class="chip" type="button">What is the overtime allowance policy?</button>
       <button class="chip" type="button">Who are Cross Functional Team Karachi Members?</button>
+      <button class="chip" type="button">Sick Leave and Casual Leave Details?</button>
     </div>
   </div>
-</main>
+    </main>
 
 <form id="form" class="composer">
   <div class="composer-inner"><div class="composer-row">
@@ -118,6 +205,8 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ink);outline-offset
   <div class="hint">Enter to send &middot; Shift+Enter for a new line &middot; Check important details against the source.</div>
   </div>
 </form>
+  </section>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 <script>
@@ -128,6 +217,35 @@ button:focus-visible,a:focus-visible{outline:2px solid var(--ink);outline-offset
   const reset = document.getElementById("reset");
   const emptyTemplate = document.getElementById("empty").cloneNode(true);
   let history = [];
+
+  // Filter the PDF library by filename.
+  const pdfSearch = document.getElementById("pdfSearch");
+  const pdfItems = Array.from(document.querySelectorAll(".pdf-item"));
+  const pdfNoMatches = document.getElementById("pdfNoMatches");
+  if (pdfSearch) {
+    pdfSearch.addEventListener("input", () => {
+      const query = pdfSearch.value.trim().toLowerCase();
+      let visibleCount = 0;
+      pdfItems.forEach((item) => {
+        const matches = item.dataset.filename.includes(query);
+        item.hidden = !matches;
+        if (matches) visibleCount++;
+      });
+      if (pdfNoMatches) pdfNoMatches.hidden = visibleCount !== 0 || pdfItems.length === 0;
+    });
+  }
+
+  // On phones, keep the PDF library collapsible to preserve chat space.
+  const workspace = document.getElementById("workspace");
+  const libraryToggle = document.getElementById("libraryToggle");
+  if (libraryToggle && workspace) {
+    libraryToggle.addEventListener("click", () => {
+      const isOpen = workspace.classList.toggle("library-open");
+      libraryToggle.setAttribute("aria-expanded", String(isOpen));
+      const label = libraryToggle.querySelector("span");
+      if (label) label.textContent = label.textContent.replace(/[▾▴]/, isOpen ? "▴" : "▾");
+    });
+  }
 
   function addMessage(kind, text, sources) {
     const empty = document.getElementById("empty");
